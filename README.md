@@ -1,94 +1,145 @@
 # Loru
 
-**Loru** is a training and inference toolkit for **sign language recognition**:
+[![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue.svg)](https://www.python.org/downloads/)
+[![Version](https://img.shields.io/badge/version-0.2.1-0E8A16.svg)](pyproject.toml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![MergeOS](https://img.shields.io/badge/MergeOS-bounties-5319E7.svg)](https://github.com/mergeos-bounties)
+
+**Loru** is an offline **sign language** toolkit: landmark sequences → gloss/text, and sign → **voice (WAV)** — demos and train loops without a GPU requirement for the smoke path.
+
+Product: [mergeos-bounties/Loru](https://github.com/mergeos-bounties/Loru)
+
+---
+
+## Table of contents
+
+- [Highlights](#highlights)
+- [Screenshots](#screenshots)
+- [Quick start](#quick-start)
+- [CLI reference](#cli-reference)
+- [Data & pipeline](#data--pipeline)
+- [Architecture](#architecture)
+- [Development](#development)
+- [MergeOS bounties](#mergeos-bounties)
+- [License](#license)
+
+---
+
+## Highlights
 
 | Mode | Description |
 | --- | --- |
-| **Sign → Text** | Video / landmark sequences → gloss or natural language text |
-| **Sign → Voice** | Sign recognition → TTS audio output |
+| **Sign → text** | Landmark JSON sequences → gloss / sentence |
+| **Sign → voice** | Recognition + TTS-style WAV export |
+| **Offline demo** | Samples, toy train, infer `hello` end-to-end |
+| **Gloss vocab** | Default gloss set for demos |
+| **Serve** | Optional FastAPI for integrations |
 
-Built under the [mergeos-bounties](https://github.com/mergeos-bounties) org so delivery can be funded as MergeOS tasks with MRG payouts.
-
+---
 
 ## Screenshots
 
-Real captures from running the product demo (Loru).
+| Pipeline | Samples |
+| :---: | :---: |
+| ![Sign→voice](docs/screenshots/demo-sign-to-voice.png) | ![Samples](docs/screenshots/demo-samples.png) |
+| *Offline sign → text → voice* | *Gloss sample catalog* |
 
-![Sign → text → voice pipeline](docs/screenshots/demo-sign-to-voice.png)
-
-*Sign → text → voice pipeline*
-
-![Gloss sample catalog](docs/screenshots/demo-samples.png)
-
-*Gloss sample catalog*
-
-## Stack
-
-- Python 3.11+
-- CLI: `typer` + `rich`
-- Dataset / sample pipeline (pluggable)
-- Training stubs (PyTorch optional extra)
-- Inference API sketch (FastAPI optional extra)
-- TTS adapter interface (sign → voice)
+---
 
 ## Quick start
 
-```bash
+```powershell
 cd Loru
 python -m venv .venv
-
-# Windows
-.venv\Scripts\activate
-
+.\.venv\Scripts\activate
 pip install -e ".[dev]"
-loru --help
-```
 
-## Commands (runnable offline)
-
-```bash
 loru version
-loru demo                              # train + infer text + audible WAV
-loru data list                         # 30 synthetic sign samples
-loru infer text --sequence data/samples/hello.json
-loru infer voice --sequence data/samples/hello.json --out data/out/hello.wav
-loru infer sentence -g hello -g friend
-loru eval toy                          # accuracy table over samples
-loru train toy --epochs 3
+loru data list
+loru demo
 ```
 
-## Layout
+Demo writes audio under the configured output directory (e.g. `demo_hello.wav`).
 
+---
+
+## CLI reference
+
+| Command | Purpose |
+| --- | --- |
+| `loru version` | Version + demo gloss vocab |
+| `loru demo` | Train smoke + infer text + voice on `hello` |
+| `loru data list` | Landmark sample files |
+| `loru infer demo -s hello` | Gloss → sentence |
+| `loru infer text …` | Sign file → text |
+| `loru train` / `eval` | Toy train + evaluation |
+| `loru serve` | Optional API |
+
+```powershell
+loru infer demo --sign thank_you
+loru demo
 ```
+
+---
+
+## Data & pipeline
+
+```text
+samples (JSON landmarks)
+        │
+        ▼
+  toy train / vocab
+        │
+        ├─► sign_to_text  → gloss / sentence
+        └─► sign_to_voice → WAV path
+```
+
+| Path | Content |
+| --- | --- |
+| Samples | `SAMPLES_DIR` landmark sequences |
+| Outputs | `OUT_DIR` audio + reports |
+
+Respect consent and privacy for real sign recordings; demos use synthetic/offline fixtures.
+
+---
+
+## Architecture
+
+```text
 src/loru/
-  cli.py              # Typer entry
-  config.py
-  models/             # gloss vocab + toy model
-  data/               # loaders + sample sequences
-  train/              # training loop stubs
-  infer/              # sign→text pipeline
-  voice/              # text→speech adapters
-  api/                # optional FastAPI app
-data/samples/         # tiny JSON landmark sequences
-docs/BOUNTY.md        # MergeOS MRG claim rules
+  cli.py
+  infer/          # text, voice, pipeline
+  data/loader.py
+  models/vocab.py
+  train/toy_train.py
+docs/screenshots/
 ```
+
+---
+
+## Development
+
+```powershell
+pytest -q
+ruff check src tests
+loru demo
+```
+
+---
 
 ## MergeOS bounties
 
-1. Star this repo + [mergeos](https://github.com/mergeos-bounties/mergeos)
-2. Claim an issue labeled `bounty`
-3. Also claim on MergeOS [issue #1](https://github.com/mergeos-bounties/mergeos/issues/1)
-4. Open a PR with tests/evidence
-5. Maintainer merges and credits MRG (25/50/100/200)
+High demand: **sign packs** (gloss + evidence photo/video + consent).  
+Star repos → claim issue → PR to **master** → MRG **25–200**.
 
-See [docs/BOUNTY.md](docs/BOUNTY.md).
+---
 
-## Privacy & ethics
+## Tiếng Việt
 
-- Prefer **consented** datasets and public research corpora with clear licenses.
-- Do not scrape private video without permission.
-- Document dataset licenses in every PR that adds data.
+**Loru** nhận diện ký hiệu → chữ / giọng (offline demo). Chạy: `loru demo`.
+
+---
 
 ## License
 
-MIT
+MIT · MergeOS / ThanhTrucSolutions
