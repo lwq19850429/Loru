@@ -6,22 +6,22 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![MergeOS](https://img.shields.io/badge/MergeOS-bounties-5319E7.svg)](https://github.com/mergeos-bounties)
 
-**Loru** is an offline **sign language** toolkit: landmark sequences → gloss/text, and sign → **voice (WAV)** — demos and train loops without a GPU requirement for the smoke path.
+**Loru** is an offline **sign language** toolkit: landmark sequences → gloss/text, and sign → **voice (WAV)** — demos and train loops without a GPU for the smoke path.
 
-Product: [mergeos-bounties/Loru](https://github.com/mergeos-bounties/Loru)
+**Product:** [mergeos-bounties/Loru](https://github.com/mergeos-bounties/Loru)
 
 ---
 
 ## Table of contents
 
 - [Highlights](#highlights)
-- [Screenshots](#screenshots)
 - [Desktop GUI (Qt)](#desktop-gui-qt)
+- [Screenshots](#screenshots)
 - [Quick start](#quick-start)
 - [CLI reference](#cli-reference)
 - [Data & pipeline](#data--pipeline)
 - [Diagrams](#diagrams)
-- [Architecture](#architecture)
+- [Repository layout](#repository-layout)
 - [Development](#development)
 - [MergeOS bounties](#mergeos-bounties)
 - [License](#license)
@@ -41,15 +41,6 @@ Product: [mergeos-bounties/Loru](https://github.com/mergeos-bounties/Loru)
 
 ---
 
-## Screenshots
-
-| Pipeline | Samples |
-| :---: | :---: |
-| ![Sign→voice](docs/screenshots/demo-sign-to-voice.png) | ![Samples](docs/screenshots/demo-samples.png) |
-| *Offline sign → text → voice* | *Gloss sample catalog* |
-
----
-
 ## Desktop GUI (Qt)
 
 Modern dark **PySide6** demo shell — full demo, samples, infer, train, gloss vocab.
@@ -63,32 +54,38 @@ loru-gui
 <p align="center">
   <img src="docs/screenshots/gui-demo.png" alt="Loru GUI — Full demo" width="100%" />
 </p>
-
-*Full offline demo (train → text → WAV)*
+<p align="center"><em>Full offline demo (train → text → WAV)</em></p>
 
 <p align="center">
   <img src="docs/screenshots/gui-samples.png" alt="Loru GUI — Samples" width="100%" />
 </p>
-
-*Landmark sample catalog*
+<p align="center"><em>Landmark sample catalog</em></p>
 
 <p align="center">
   <img src="docs/screenshots/gui-infer.png" alt="Loru GUI — Infer" width="100%" />
 </p>
-
-*Inference (sign→text / voice / gloss)*
+<p align="center"><em>Inference (sign→text / voice / gloss)</em></p>
 
 <p align="center">
   <img src="docs/screenshots/gui-train.png" alt="Loru GUI — Train" width="100%" />
 </p>
-
-*Toy train*
+<p align="center"><em>Toy train</em></p>
 
 <p align="center">
   <img src="docs/screenshots/gui-vocab.png" alt="Loru GUI — Vocab" width="100%" />
 </p>
+<p align="center"><em>Default gloss vocabulary</em></p>
 
-*Default gloss vocabulary*
+---
+
+## Screenshots
+
+CLI / pipeline captures:
+
+| Pipeline | Samples |
+| :---: | :---: |
+| ![Sign→voice](docs/screenshots/demo-sign-to-voice.png) | ![Samples](docs/screenshots/demo-samples.png) |
+| *Offline sign → text → voice* | *Gloss sample catalog* |
 
 ---
 
@@ -103,7 +100,7 @@ pip install -e ".[dev,gui]"
 loru version
 loru data list
 loru demo
-loru-gui          # Qt desktop demo
+loru-gui
 ```
 
 Demo writes audio under the configured output directory (e.g. `demo_hello.wav`).
@@ -152,18 +149,16 @@ Respect consent and privacy for real sign recordings; demos use synthetic/offlin
 
 ---
 
-
 ## Diagrams
 
-System architecture and workflow — shown full-width below.  
-Open the HTML files for **dark/light theme toggle** and export (PNG/SVG).
+System architecture and workflow — full width. Open the HTML files for **dark/light theme** and export (PNG/SVG).
 
 ### Architecture
 
 [Open interactive diagram](docs/diagrams/architecture.html)
 
 <p align="center">
-  <img src="docs/diagrams/architecture.svg" alt="Architecture diagram" width="100%" />
+  <img src="docs/diagrams/architecture.svg" alt="Loru architecture" width="100%" />
 </p>
 
 ### Workflow
@@ -171,21 +166,25 @@ Open the HTML files for **dark/light theme toggle** and export (PNG/SVG).
 [Open interactive diagram](docs/diagrams/workflow.html)
 
 <p align="center">
-  <img src="docs/diagrams/workflow.svg" alt="Workflow diagram" width="100%" />
+  <img src="docs/diagrams/workflow.svg" alt="Loru workflow" width="100%" />
 </p>
 
 *Generated with [archify](https://github.com/tt-a1i).*
 
-## Architecture
+---
+
+## Repository layout
 
 ```text
 src/loru/
   cli.py
+  gui/            # PySide6 desktop demo (loru-gui)
   infer/          # text, voice, pipeline
   data/loader.py
   models/vocab.py
   train/toy_train.py
 docs/screenshots/
+docs/diagrams/
 ```
 
 ---
@@ -196,6 +195,7 @@ docs/screenshots/
 pytest -q
 ruff check src tests
 loru demo
+python scripts/capture_gui_shots.py   # refresh GUI screenshots
 ```
 
 ---
@@ -209,7 +209,7 @@ Star repos → claim issue → PR to **master** → MRG **25–200**.
 
 ## Tiếng Việt
 
-**Loru** nhận diện ký hiệu → chữ / giọng (offline demo). Chạy: `loru demo`.
+**Loru** nhận diện ký hiệu → chữ / giọng (offline demo). Chạy: `loru demo` hoặc `loru-gui`.
 
 ---
 
