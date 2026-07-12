@@ -36,6 +36,10 @@ TEMPLATES = {
     "know": "I know.",
     "big": "It is big.",
     "small": "It is small.",
+    "welcome": "Welcome!",
+    "maybe": "Maybe.",
+    "wait": "Please wait.",
+    "today": "Today.",
 }
 
 

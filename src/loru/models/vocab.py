@@ -35,6 +35,7 @@ DEFAULT_GLOSS = [
     "welcome",
     "maybe",
     "wait",
+    "today",
 ]
 
 
