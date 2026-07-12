@@ -31,29 +31,17 @@ pip install -e ".[dev]"
 loru --help
 ```
 
-## Commands
+## Commands (runnable offline)
 
 ```bash
-# Show config / version
 loru version
-
-# List sample dataset
-loru data list
-
-# Run a tiny offline demo: fake landmarks → text gloss
-loru infer demo --sign hello
-
-# Sign → text (demo model)
+loru demo                              # train + infer text + audible WAV
+loru data list                         # 30 synthetic sign samples
 loru infer text --sequence data/samples/hello.json
-
-# Sign → voice (writes wav via offline TTS stub)
 loru infer voice --sequence data/samples/hello.json --out data/out/hello.wav
-
-# Train a toy classifier on bundled samples
+loru infer sentence -g hello -g friend
+loru eval toy                          # accuracy table over samples
 loru train toy --epochs 3
-
-# Export training report
-loru train report
 ```
 
 ## Layout

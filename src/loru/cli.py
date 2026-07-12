@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 from pathlib import Path
 
 import typer
@@ -7,20 +8,25 @@ from rich.console import Console
 from rich.table import Table
 
 from loru import __version__
-from loru.config import OUT_DIR, SAMPLES_DIR
+from loru.config import OUT_DIR, RUNS_DIR, SAMPLES_DIR
 from loru.data.loader import list_sample_files, sequence_summary
 from loru.infer.pipeline import sign_to_voice
-from loru.infer.text import gloss_to_sentence, sign_to_text
+from loru.infer.text import gloss_to_sentence, multi_gloss_to_sentence, sign_to_text
 from loru.models.vocab import DEFAULT_GLOSS
 from loru.train.toy_train import train_toy
 
-app = typer.Typer(help="Loru — sign-to-text and sign-to-voice training toolkit.", no_args_is_help=True)
+app = typer.Typer(
+    help="Loru — sign-to-text and sign-to-voice (runnable offline demo).",
+    no_args_is_help=True,
+)
 data_app = typer.Typer(help="Dataset helpers")
 infer_app = typer.Typer(help="Inference (sign→text / sign→voice)")
 train_app = typer.Typer(help="Training")
+eval_app = typer.Typer(help="Evaluation")
 app.add_typer(data_app, name="data")
 app.add_typer(infer_app, name="infer")
 app.add_typer(train_app, name="train")
+app.add_typer(eval_app, name="eval")
 console = Console()
 
 
@@ -28,6 +34,24 @@ console = Console()
 def version_cmd() -> None:
     console.print(f"Loru {__version__}")
     console.print(f"Demo gloss vocab ({len(DEFAULT_GLOSS)}): {', '.join(DEFAULT_GLOSS)}")
+
+
+@app.command("demo")
+def demo_cmd() -> None:
+    """Run full offline demo: list samples, train, infer text+voice on hello."""
+    files = list_sample_files()
+    console.print(f"[cyan]samples[/cyan]={len(files)} dir={SAMPLES_DIR}")
+    report = train_toy(epochs=2)
+    console.print(f"[green]train accuracy[/green]={report['history'][-1]['accuracy']}")
+    hello = SAMPLES_DIR / "hello.json"
+    if not hello.exists() and files:
+        hello = files[0]
+    text = sign_to_text(hello)
+    console.print_json(data=text)
+    wav = OUT_DIR / "demo_hello.wav"
+    voice = sign_to_voice(hello, wav)
+    console.print(f"[green]voice[/green] {voice['audio_path']}")
+    console.print("[bold]Demo complete — offline sign→text→voice works.[/bold]")
 
 
 @data_app.command("list")
@@ -48,7 +72,6 @@ def data_list() -> None:
 
 @infer_app.command("demo")
 def infer_demo(sign: str = typer.Option("hello", "--sign", "-s")) -> None:
-    """Print natural language for a gloss without video."""
     console.print(f"[cyan]gloss[/cyan]={sign}")
     console.print(f"[green]text[/green]={gloss_to_sentence(sign)}")
 
@@ -57,8 +80,7 @@ def infer_demo(sign: str = typer.Option("hello", "--sign", "-s")) -> None:
 def infer_text(
     sequence: Path = typer.Option(..., "--sequence", "-i", exists=True, dir_okay=False),
 ) -> None:
-    result = sign_to_text(sequence)
-    console.print_json(data=result)
+    console.print_json(data=sign_to_text(sequence))
 
 
 @infer_app.command("voice")
@@ -67,8 +89,50 @@ def infer_voice(
     out: Path = typer.Option(None, "--out", "-o"),
 ) -> None:
     out_path = out or (OUT_DIR / f"{sequence.stem}.wav")
-    result = sign_to_voice(sequence, out_path)
-    console.print_json(data=result)
+    console.print_json(data=sign_to_voice(sequence, out_path))
+
+
+@infer_app.command("sentence")
+def infer_sentence(
+    gloss: list[str] = typer.Option(..., "--gloss", "-g", help="Repeat for multi-gloss"),
+) -> None:
+    text = multi_gloss_to_sentence(gloss)
+    console.print_json(data={"glosses": gloss, "text": text})
+
+
+@eval_app.command("toy")
+def eval_toy() -> None:
+    files = list_sample_files()
+    if not files:
+        console.print("[yellow]No samples[/yellow]")
+        raise typer.Exit(1)
+    hits = 0
+    table = Table(title="Eval toy")
+    table.add_column("File")
+    table.add_column("True")
+    table.add_column("Pred")
+    table.add_column("Conf")
+    table.add_column("OK")
+    for path in files:
+        r = sign_to_text(path)
+        ok = r["predicted_gloss"] == r["true_gloss"]
+        if ok:
+            hits += 1
+        table.add_row(
+            path.name,
+            r["true_gloss"],
+            r["predicted_gloss"],
+            str(r["confidence"]),
+            "✓" if ok else "✗",
+        )
+    console.print(table)
+    acc = hits / len(files)
+    console.print(f"accuracy={acc:.3f} ({hits}/{len(files)})")
+    RUNS_DIR.mkdir(parents=True, exist_ok=True)
+    report = {"accuracy": round(acc, 4), "hits": hits, "n": len(files)}
+    (RUNS_DIR / "eval_toy.json").write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
+    if acc < 0.8:
+        raise typer.Exit(1)
 
 
 @train_app.command("toy")

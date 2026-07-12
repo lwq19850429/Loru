@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-# Tiny demo gloss vocabulary (isolated signs).
+# Runnable demo gloss vocabulary (isolated signs with bundled synthetic samples).
 DEFAULT_GLOSS = [
     "hello",
     "thanks",
@@ -12,6 +12,26 @@ DEFAULT_GLOSS = [
     "name",
     "water",
     "good",
+    "goodbye",
+    "sorry",
+    "stop",
+    "want",
+    "need",
+    "happy",
+    "sad",
+    "mother",
+    "father",
+    "friend",
+    "eat_food",
+    "drink",
+    "home",
+    "school",
+    "go",
+    "come",
+    "see",
+    "know",
+    "big",
+    "small",
 ]
 
 
