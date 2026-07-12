@@ -12,6 +12,10 @@ class TextToSpeech:
     def speak(self, text: str, out_path: Path) -> Path:
         raise NotImplementedError
 
+    @property
+    def backend_name(self) -> str:
+        return self.__class__.__name__
+
 
 class OfflineStubTTS(TextToSpeech):
     """
@@ -43,5 +47,37 @@ class OfflineStubTTS(TextToSpeech):
         return out_path
 
 
+class Pyttsx3TTS(TextToSpeech):
+    """Optional native TTS when pyttsx3 is installed (LORU_TTS=pyttsx3)."""
+
+    def __init__(self) -> None:
+        import pyttsx3  # type: ignore
+
+        self._engine = pyttsx3.init()
+
+    def speak(self, text: str, out_path: Path) -> Path:
+        out_path.parent.mkdir(parents=True, exist_ok=True)
+        # pyttsx3 often needs .wav path; also keep text sidecar
+        self._engine.save_to_file(text, str(out_path))
+        self._engine.runAndWait()
+        out_path.with_suffix(".txt").write_text(text, encoding="utf-8")
+        if not out_path.exists() or out_path.stat().st_size < 44:
+            # fall back if engine did not write a real wav
+            return OfflineStubTTS().speak(text, out_path)
+        return out_path
+
+
 def get_default_tts() -> TextToSpeech:
+    import os
+
+    prefer = (os.getenv("LORU_TTS") or "auto").strip().lower()
+    if prefer in {"stub", "offline", "tone"}:
+        return OfflineStubTTS()
+    if prefer in {"pyttsx3", "native", "auto"}:
+        try:
+            return Pyttsx3TTS()
+        except Exception:
+            if prefer == "pyttsx3":
+                raise
+            return OfflineStubTTS()
     return OfflineStubTTS()

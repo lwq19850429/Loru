@@ -62,6 +62,22 @@ def demo_cmd() -> None:
     console.print("[bold]Demo complete — offline sign→text→voice works.[/bold]")
 
 
+@infer_app.command("stream")
+def infer_stream(
+    glosses: str = typer.Option(
+        "hello thanks",
+        "--glosses",
+        "-g",
+        help="Space-separated gloss stream (continuous stub)",
+    ),
+) -> None:
+    """Progressive multi-gloss sentence stream (scaffold for live recognition)."""
+    from loru.infer.stream import stream_glosses
+
+    parts = [g for g in glosses.replace(",", " ").split() if g.strip()]
+    console.print_json(data=stream_glosses(parts))
+
+
 @data_app.command("list")
 def data_list() -> None:
     files = list_sample_files()
