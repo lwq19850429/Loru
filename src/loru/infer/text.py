@@ -43,6 +43,7 @@ TEMPLATES = {
     "understand": "I understand.",
     "again": "Again.",
     "more": "I want more.",
+    "finish": "I am finished.",
 }
 
 

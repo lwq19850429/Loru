@@ -39,6 +39,7 @@ DEFAULT_GLOSS = [
     "understand",
     "again",
     "more",
+    "finish",
 ]
 
 
