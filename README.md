@@ -18,6 +18,7 @@ Product: [mergeos-bounties/Loru](https://github.com/mergeos-bounties/Loru)
 - [Quick start](#quick-start)
 - [CLI reference](#cli-reference)
 - [Data & pipeline](#data--pipeline)
+- [Diagrams](#diagrams)
 - [Architecture](#architecture)
 - [Development](#development)
 - [MergeOS bounties](#mergeos-bounties)
@@ -102,6 +103,18 @@ samples (JSON landmarks)
 Respect consent and privacy for real sign recordings; demos use synthetic/offline fixtures.
 
 ---
+
+
+## Diagrams
+
+Interactive Archify diagrams (dark/light theme, export PNG/SVG in the HTML viewer):
+
+| Diagram | Interactive | README embed |
+| --- | --- | --- |
+| **Architecture** | [docs/diagrams/architecture.html](docs/diagrams/architecture.html) | ![Architecture](docs/diagrams/architecture.svg) |
+| **Workflow** | [docs/diagrams/workflow.html](docs/diagrams/workflow.html) | ![Workflow](docs/diagrams/workflow.svg) |
+
+*Generated with [archify](https://github.com/tt-a1i) — open the `.html` files for theme toggle and export.*
 
 ## Architecture
 
