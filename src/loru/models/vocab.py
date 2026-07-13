@@ -44,6 +44,7 @@ DEFAULT_GLOSS = [
     "where",
     "how",
     "why",
+    "family",
 ]
 
 
