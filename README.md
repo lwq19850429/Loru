@@ -207,12 +207,6 @@ Star repos → claim issue → PR to **master** → MRG **25–200**.
 
 ---
 
-## Tiếng Việt
-
-**Loru** nhận diện ký hiệu → chữ / giọng (offline demo). Chạy: `loru demo` hoặc `loru-gui`.
-
----
-
 ## License
 
 MIT · MergeOS / ThanhTrucSolutions
