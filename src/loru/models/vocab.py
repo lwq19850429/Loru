@@ -53,6 +53,7 @@ DEFAULT_GLOSS = [
     "night",
     "morning",
     "afternoon",
+    "evening",
 ]
 
 
