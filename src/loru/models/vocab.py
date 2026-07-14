@@ -50,6 +50,7 @@ DEFAULT_GLOSS = [
     "tomorrow",
     "yesterday",
     "outside",    "inside",
+    "night",
 ]
 
 
