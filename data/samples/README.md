@@ -14,3 +14,4 @@ These are **not** real sign language recordings. Replace with consented / licens
 ## Cycle 2026-07-14b
 
 Ensure every `DEFAULT_GLOSS` entry has a matching `samples/<gloss>.json`. Run `loru data coverage` (or vocab coverage CLI) after adding samples.
+- Cycle 2026-07-14c: keep sample filenames identical to DEFAULT_GLOSS keys.
