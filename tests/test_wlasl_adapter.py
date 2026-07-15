@@ -19,13 +19,14 @@ def test_load_wlasl_manifest_normalizes_entries() -> None:
     assert manifest[0]["video_id"] == "wlasl-thank-you-001"
     assert manifest[0]["split"] == "train"
     assert manifest[0]["source_url"] == "https://example.invalid/wlasl/thank-you.mp4"
-    assert manifest[0]["sequence_path"].endswith("data/samples/thank_you.json")
+    # Path may be absolute (Windows) or relative — only require trailing sample path.
+    assert Path(manifest[0]["sequence_path"]).as_posix().endswith("data/samples/thank_you.json")
     assert manifest[0]["sequence_exists"] is True
     assert manifest[0]["frame_start"] == 1
     assert manifest[0]["frame_end"] == 48
 
     assert manifest[1]["gloss"] == "hello"
-    assert manifest[1]["sequence_path"].endswith("data/samples/hello.json")
+    assert Path(manifest[1]["sequence_path"]).as_posix().endswith("data/samples/hello.json")
     assert manifest[1]["sequence_exists"] is True
 
 
